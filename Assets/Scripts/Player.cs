@@ -4,24 +4,27 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-	GameState gameState;
+    GameState gameState;
 
-	public int ID;
-	int spot = 0;
+    public int ID;
+    int spot = -1;
+    int targetSteps = 0;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    bool moving = false;
+
+    void Update() {
+      if (moving) {
+        Move();
+      }
     }
 
     public void LinkWorld (GameState gs) {
     	this.gameState = gs;
     }
 
-    public bool Move (int steps) {
+    public bool Move () {
     	bool finished = false;
-    	spot += steps;
+    	spot += 1;
 
     	if (spot >= 99) {
     		spot = 99;
@@ -31,6 +34,15 @@ public class Player : MonoBehaviour
     	var tile = gameState.grid.GetTileByIndex(spot);
     	var me = GetComponent<Transform>();
     	me.position = new Vector3(tile.coords.x, me.position.y, tile.coords.z);
-    	return finished;
+
+      moving = targetSteps > 0;
+      targetSteps -= 1;
+
+      return finished;
+    }
+
+    public void SetSpot (int steps) {
+      targetSteps = steps;
+      moving = true;
     }
 }
