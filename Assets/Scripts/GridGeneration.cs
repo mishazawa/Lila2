@@ -78,6 +78,7 @@ public class GridGeneration : MonoBehaviour {
 
         t.next = dest - 1;
         t.snake = spot > dest;
+        t.ladder = spot < dest;
       }
     }
 

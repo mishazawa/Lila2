@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum GAME_STATE {
   WAIT_ROLL,
@@ -33,27 +34,18 @@ public class GameState : MonoBehaviour {
       if (state == GAME_STATE.WAIT_ROLL) {
           if (Input.GetKeyUp(KeyCode.Q)) {
             SetState(GAME_STATE.MOVING);
-
             var roll = queue.Roll();
             var current = queue.Current();
-            players[current].SetSpot(roll);
-
+            players[current].SetSteps(roll);
+            queue.NextPlayer();
           }
-      }
-
-      if (state == GAME_STATE.MOVING) {
-        // if (finished) {
-        //  SetState(GAME_STATE.GAME_OVER);
-        // } else {
-        //  SetState(GAME_STATE.WAIT_ROLL);
-        //  queue.NextPlayer();
-        // }
       }
 
       if (state == GAME_STATE.GAME_OVER) {
           var current = queue.Current();
           var winner = players[current].ID;
-        print("Game Over! Winner player: " + winner);
+          print("Game Over! Winner player: " + winner);
+          SceneManager.LoadScene("Main");
       }
     }
 
@@ -62,6 +54,7 @@ public class GameState : MonoBehaviour {
     }
 
     public void SetState(GAME_STATE s) {
+      // Debug.Log(s);
       state = s;
     }
 }
