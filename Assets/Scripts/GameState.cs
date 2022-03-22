@@ -19,7 +19,6 @@ public class GameState : MonoBehaviour {
   void Awake () {
     grid.LinkWorld(this);
     grid.Create();
-    grid.Instantiate();
 
     queue.LinkWorld(this);
 

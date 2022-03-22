@@ -11,6 +11,13 @@ public class Player : MonoBehaviour
     int spot = 0;
     int targetSteps = 0;
 
+    const float SPOT_CENTER_OFFSET = .15f;
+    static Vector3[] PLAYER_OFFSET = new Vector3[] {
+      new Vector3(-SPOT_CENTER_OFFSET, 0, -SPOT_CENTER_OFFSET),
+      new Vector3(-SPOT_CENTER_OFFSET, 0,  SPOT_CENTER_OFFSET),
+      new Vector3( SPOT_CENTER_OFFSET, 0, -SPOT_CENTER_OFFSET),
+      new Vector3( SPOT_CENTER_OFFSET, 0,  SPOT_CENTER_OFFSET),
+    };
 
     public void LinkWorld (GameState gs) {
     	this.gameState = gs;
@@ -47,14 +54,14 @@ public class Player : MonoBehaviour
 
       var tile = gameState.grid.GetTileByIndex(spot);
       var me = GetComponent<Transform>();
-
-      return new Vector3(tile.coords.x, me.position.y, tile.coords.z);
+      var offset = PLAYER_OFFSET[ID];
+      return new Vector3(tile.transform.position.x + offset.x, me.position.y, tile.transform.position.z + offset.z);
     }
 
     private void checkSpotAndDoAction (int spot) {
-      var tile = gameState.grid.GetTileByIndex(spot);
+      var tile = gameState.grid.GetTileDataByIndex(spot);
 
-      if (tile.snake || tile.ladder) {
+      if (tile.isSnake || tile.isLadder) {
         SetSpot(tile.next - 1); // move fn incrementing spot number
         StartCoroutine(move());
         return;

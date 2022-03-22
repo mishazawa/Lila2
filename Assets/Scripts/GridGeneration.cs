@@ -10,6 +10,7 @@ public class Tile {
 
 public class GridGeneration : MonoBehaviour {
   public GameObject tile;
+  public GameObject spotPrefab;
 
   GameState gameState;
 
@@ -45,20 +46,23 @@ public class GridGeneration : MonoBehaviour {
   int rows = GRID_SIZE;
   int cols = GRID_SIZE;
 
-    Tile[] tiles;
+  GameObject[] tiles;
 
-    public void Create () {
-      tiles = new Tile[rows * cols];
-      int direction = 1;
-      int x = 0;
-      int y = (rows - 1) * TILE_SIZE;
+  public void Create () {
+    tiles = new GameObject[rows * cols];
 
-      for (int i = 0; i < rows * cols; i++) {
-        var tile = new Tile();
-        tile.index = i;
-        tile.next = i+1;
-        tile.direction = 1;
-        tile.coords = new Vector3(x, 0, y);
+    int direction = 1;
+    int x = 0;
+    int y = (rows - 1) * TILE_SIZE;
+
+    for (int i = 0; i < rows * cols; i++) {
+      var spotObject = Instantiate(spotPrefab, gameObject.transform);
+      var spotData = spotObject.GetComponent<Spot>();
+
+      spotData.index = i;
+      spotData.next  = i + 1;
+
+      spotObject.transform.localPosition = tileOffset(x, y);
 
       x += (TILE_SIZE * direction);
 
@@ -68,34 +72,38 @@ public class GridGeneration : MonoBehaviour {
         y -= TILE_SIZE;
       }
 
-        tiles[i] = tile;
-      }
-
-      foreach (int[] p in PATHS) {
-        int spot = p[0];
-        int dest = p[1];
-        var t = tiles[spot - 1];
-
-        t.next = dest - 1;
-        t.snake = spot > dest;
-        t.ladder = spot < dest;
-      }
+      tiles[i] = spotObject;
     }
 
-    public void Instantiate () {
-      foreach (Tile t in tiles) {
-      var tobj = Instantiate(tile, t.coords, Quaternion.identity);
-        var tmesh = tobj.GetComponent<TextMesh>();
-        tmesh.text = "" + t.index;
-      }
-    }
+    foreach (int[] p in PATHS) {
+      int spot = p[0];
+      int dest = p[1];
 
-    public Tile GetTileByIndex(int i) {
-      return tiles[i];
-    }
+      var spotObject = tiles[spot - 1];
+      var spotData = spotObject.GetComponent<Spot>();
 
-    public void LinkWorld (GameState gs) {
-      this.gameState = gs;
+
+      spotData.next = dest - 1;
+      spotData.isSnake = spot > dest;
+      spotData.isLadder = spot < dest;
     }
+  }
+
+  public GameObject GetTileByIndex(int i) {
+    return tiles[i];
+  }
+  public Spot GetTileDataByIndex(int i) {
+    var spotData = tiles[i].GetComponent<Spot>();
+
+    return spotData;
+  }
+
+  public void LinkWorld (GameState gs) {
+    this.gameState = gs;
+  }
+
+  private Vector3 tileOffset(float x, float y) {
+    return new Vector3(x, 0, y);
+  }
 
 }
