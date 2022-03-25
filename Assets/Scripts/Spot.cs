@@ -11,7 +11,6 @@ public class Spot : MonoBehaviour
     void Start () {
 
         var material = GetComponent<Renderer>().material;
-
         if (isSnake) {
             material.color = Color.red;
         }

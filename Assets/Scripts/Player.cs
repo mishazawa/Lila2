@@ -4,20 +4,31 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    GameState gameState;
-
     public int ID;
-    public float speed = 1;
-    int spot = 0;
-    int targetSteps = 0;
+    public float distanceThreshold = 0.25f;
+    public float duration = 2f;
 
-    const float SPOT_CENTER_OFFSET = .15f;
-    static Vector3[] PLAYER_OFFSET = new Vector3[] {
+    private GameState gameState;
+    private const float SPOT_CENTER_OFFSET = .15f;
+    private Vector3[] PLAYER_OFFSET = new Vector3[] {
       new Vector3(-SPOT_CENTER_OFFSET, 0, -SPOT_CENTER_OFFSET),
       new Vector3(-SPOT_CENTER_OFFSET, 0,  SPOT_CENTER_OFFSET),
       new Vector3( SPOT_CENTER_OFFSET, 0, -SPOT_CENTER_OFFSET),
       new Vector3( SPOT_CENTER_OFFSET, 0,  SPOT_CENTER_OFFSET),
     };
+
+    private int spot = 0;
+    private int targetSteps = 0;
+
+
+    private Animator anim;
+    private Coroutine rotating;
+    private Coroutine moving;
+
+
+    void Start() {
+      anim = GetComponent<Animator>();
+    }
 
     public void LinkWorld (GameState gs) {
     	this.gameState = gs;
@@ -25,45 +36,69 @@ public class Player : MonoBehaviour
 
     public void SetSteps (int steps) {
       targetSteps = steps;
-      StartCoroutine(move());
+      startMovement();
     }
 
     public void SetSpot(int s) {
       spot = s;
-    }
-
-    IEnumerator move() {
-      bool moving = true;
-
-      while (moving) {
-          moving = targetSteps > 0;
-          var positionToMoveTo = setNewPosition();
-          yield return StartCoroutine(LerpPosition(positionToMoveTo, 1f/speed));
-      }
-
-      checkSpotAndDoAction(spot);
-    }
-
-    private Vector3 setNewPosition () {
-      spot += 1;
-      targetSteps -= 1;
-
       if (spot >= 99) {
         spot = 99;
       }
+    }
 
-      var tile = gameState.grid.GetTileByIndex(spot);
-      var me = GetComponent<Transform>();
-      var offset = PLAYER_OFFSET[ID];
-      return new Vector3(tile.transform.position.x + offset.x, me.position.y, tile.transform.position.z + offset.z);
+    private void startMovement() {
+      SetSpot(spot+1);
+
+      if (rotating != null) {
+          StopCoroutine(rotating);
+      }
+      if (moving != null) {
+          StopCoroutine(moving);
+      }
+
+
+      rotating = StartCoroutine(Rotating());
+      moving = StartCoroutine(Running());
+    }
+
+    private IEnumerator Rotating() {
+        var tile = gameState.grid.GetTileByIndex(spot);
+
+        float time = 0;
+        var angle = Quaternion.LookRotation(tile.transform.position - transform.position, Vector3.up);
+        while (time < duration) {
+            transform.rotation = Quaternion.Lerp(transform.rotation, angle, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    private IEnumerator Running() {
+        anim.SetFloat("Speed", 1);
+
+        var tile = gameState.grid.GetTileByIndex(spot);
+
+        var distance = Vector3.Distance(transform.position, tile.transform.position);
+        while (distance > distanceThreshold) {
+            distance = Vector3.Distance(transform.position, tile.transform.position);
+            yield return null;
+        }
+
+        anim.SetFloat("Speed", 0);
+
+        if (targetSteps > 0) {
+          SetSteps(targetSteps-1);
+        } else {
+          checkSpotAndDoAction(spot);
+        }
     }
 
     private void checkSpotAndDoAction (int spot) {
       var tile = gameState.grid.GetTileDataByIndex(spot);
 
       if (tile.isSnake || tile.isLadder) {
-        SetSpot(tile.next - 1); // move fn incrementing spot number
-        StartCoroutine(move());
+        SetSpot(tile.next - 1); // startMovement fn incrementing spot number
+        startMovement();
         return;
       }
 
@@ -73,17 +108,4 @@ public class Player : MonoBehaviour
         gameState.SetState(GAME_STATE.GAME_OVER);
       }
     }
-
-    private IEnumerator LerpPosition(Vector3 targetPosition, float duration) {
-      float time = 0;
-      Vector3 startPosition = transform.position;
-      while (time < duration)
-      {
-          transform.position = Vector3.Lerp(startPosition, targetPosition, time / duration);
-          time += Time.deltaTime;
-          yield return null;
-      }
-      transform.position = targetPosition;
-    }
-
 }
