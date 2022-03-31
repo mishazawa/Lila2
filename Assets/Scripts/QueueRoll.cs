@@ -6,14 +6,14 @@ using Random = UnityEngine.Random;
 
 public class QueueRoll : MonoBehaviour
 {
-	GameState gameState;
+	State gameState;
 
 	int counter = 0;
 
     void Start () {}
     void Update() {}
 
-    public void LinkWorld (GameState gs) {
+    public void LinkWorld (State gs) {
     	this.gameState = gs;
     }
 

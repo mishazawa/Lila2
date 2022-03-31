@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum GAME_STATE {
-  WAIT_ROLL,
-  MOVING,
-  GAME_OVER,
-}
+
 
 public class GameState : MonoBehaviour {
   private GAME_STATE state = GAME_STATE.WAIT_ROLL;
@@ -17,14 +13,14 @@ public class GameState : MonoBehaviour {
   public GridGeneration grid;
 
   void Awake () {
-    grid.LinkWorld(this);
-    grid.Create();
+    // grid.LinkWorld(this);
+    // grid.Create();
 
-    queue.LinkWorld(this);
+    // queue.LinkWorld(this);
 
-    foreach (Player p in players) {
-      p.LinkWorld(this);
-    }
+    // foreach (Player p in players) {
+    //   p.LinkWorld(this);
+    // }
   }
 
     void Update()

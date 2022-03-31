@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3055961912047175810}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.05, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.01, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -113,4 +113,3 @@ MonoBehaviour:
   isLadder: 0
   index: 0
   next: 0
-  neutralMaterial: {fileID: 2100000, guid: 91078b7fe26bba3c48ae2eb2d48230dd, type: 2}
