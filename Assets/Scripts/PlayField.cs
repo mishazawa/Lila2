@@ -43,14 +43,25 @@ public class PlayField : MonoBehaviour
 
         PlayerSpot[] tiles = new PlayerSpot[spot._count];
 
-        var p = HoudiniData.ParseVector(pos);
+        var positions = HoudiniData.ParseVector(pos);
 
-        for (int i = 0; i < p.Length; i++) {
+        for (int i = 0; i < positions.Length; i++) {
             var spotData = new PlayerSpot();
-            spotData.position = VectorUtils.RotateVector(transform.parent.transform.eulerAngles, p[i]);
+            spotData.position = VectorUtils.RotateVector(transform.parent.transform.eulerAngles, positions[i]);
             spotData.index = i;
             spotData.next  = i + 1;
             tiles[i] = spotData;
+        }
+
+        foreach (int[] p in Constants.PATHS) {
+          int start = p[0];
+          int end   = p[1];
+
+          var spotData = tiles[start - 1];
+
+          spotData.next = end - 1;
+          spotData.isSnake = start > end;
+          spotData.isLadder = start < end;
         }
 
         World.GetComponent<State>().InitTiles(tiles);

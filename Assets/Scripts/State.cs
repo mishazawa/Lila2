@@ -35,9 +35,13 @@ public class State : MonoBehaviour {
       if (state == GAME_STATE.WAIT_ROLL) {
           if (Input.GetKeyUp(KeyCode.Q)) {
             SetState(GAME_STATE.MOVING);
-            var roll = queue.Roll();
+
+            var roll = queue.DebugRoll(1);
+            // var roll = queue.Roll();
             var current = queue.Current();
-            players[current].SetSteps(roll);
+            Debug.Log("Player: " + players[current].ID + " move -> +" + roll);
+            StartCoroutine(players[current].Move(roll));
+
             queue.NextPlayer();
           }
       }

@@ -17,8 +17,12 @@ public class QueueRoll : MonoBehaviour
     	this.gameState = gs;
     }
 
+    public int DebugRoll (int a) {
+      Debug.Log("Debug Roll");
+      return a;
+    }
     public int Roll () {
-    	return (int)(Math.Floor(Random.value * 6f) + 1f); 
+    	return (int)(Math.Floor(Random.value * 6f) + 1f);
     }
 
     public int Current () {
