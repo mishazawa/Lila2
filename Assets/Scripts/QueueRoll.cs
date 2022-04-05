@@ -4,14 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class QueueRoll : MonoBehaviour
-{
-	State gameState;
-
-	int counter = 0;
-
-    void Start () {}
-    void Update() {}
+public class QueueRoll : MonoBehaviour {
+    State gameState;
+    int counter = 0;
 
     public void LinkWorld (State gs) {
     	this.gameState = gs;
@@ -26,10 +21,13 @@ public class QueueRoll : MonoBehaviour
     }
 
     public int Current () {
-    	return counter % gameState.players.Length;
+    	return counter % gameState.GetPlayers().Count;
     }
     public int NextPlayer () {
     	counter += 1;
     	return Current();
-    }    
+    }
+    public void Reset () {
+      counter = 0;
+    }
 }

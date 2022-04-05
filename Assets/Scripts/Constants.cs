@@ -3,32 +3,49 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class Constants {
-  public static int[][] PATHS = new int[][] {
-    new int[]{8,   26},
-    new int[]{21,  82},
-    new int[]{43,  77},
-    new int[]{50,  91},
-    new int[]{54,  93},
-    new int[]{62,  96},
-    new int[]{66,  87},
-    new int[]{80, 100},
+  public static int[,] PATHS = {
+    {8,   26},
+    {21,  82},
+    {43,  77},
+    {50,  91},
+    {54,  93},
+    {62,  96},
+    {66,  87},
+    {80, 100},
     // snakes
-    new int[]{98, 28},
-    new int[]{95, 24},
-    new int[]{92, 51},
-    new int[]{83, 19},
-    new int[]{73,  1},
-    new int[]{69,  9},
-    new int[]{64, 36},
-    new int[]{59, 17},
-    new int[]{55,  7},
-    new int[]{52, 11},
-    new int[]{48,  9},
-    new int[]{46,  5},
-    new int[]{44, 22},
+    {98, 28},
+    {95, 24},
+    {92, 51},
+    {83, 19},
+    {73,  1},
+    {69,  9},
+    {64, 36},
+    {59, 17},
+    {55,  7},
+    {52, 11},
+    {48,  9},
+    {46,  5},
+    {44, 22},
   };
-  public static int[][] DEBUG_PATHS = new int[][] {
-    // new int[]{2, 4},
-    // new int[]{5, 1},
+  public static int[,] DEBUG_PATHS = {
+    // {2, 4},
+    // {5, 1},
   };
+
+  public static int MAX_PLAYERS = 4;
+
+  public enum GAME_STATE {
+    WAIT_PLAYERS,
+    WAIT_ROLL,
+    MOVING,
+    GAME_OVER,
+  };
+
+  public static Vector3[] SPOT_OFFSETS = {
+    new Vector3( 1f, 0f,  1f),
+    new Vector3(-1f, 0f,  1f),
+    new Vector3( 1f, 0f, -1f),
+    new Vector3(-1f, 0f, -1f),
+  };
+
 }

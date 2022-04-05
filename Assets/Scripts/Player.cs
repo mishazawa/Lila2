@@ -13,10 +13,10 @@ public class Player : MonoBehaviour
     private int spot = 0;
     private int targetSteps = 0;
 
-    private Animator anim;
+    private Vector3 slotOffset = Vector3.zero;
 
     void Start() {
-      anim = GetComponent<Animator>();
+      slotOffset = Constants.SPOT_OFFSETS[ID] * gameState.GetPlayerScale();
       StartCoroutine(running());
     }
 
@@ -37,27 +37,37 @@ public class Player : MonoBehaviour
       }
 
       if (spot != gameState.MaxSpot()) {
-        gameState.SetState(GAME_STATE.WAIT_ROLL);
+        gameState.SetState(Constants.GAME_STATE.WAIT_ROLL);
       } else {
-        gameState.SetState(GAME_STATE.GAME_OVER);
+        gameState.SetState(Constants.GAME_STATE.GAME_OVER);
       }
 
     }
 
     private IEnumerator teleport() {
       var tile = gameState.GetTileByIndex(spot);
-      transform.position = tile.position;
+      var nextTile = gameState.GetTileByIndex(spot+1);
+      transform.position = tile.position + slotOffset;
+      setRotation(nextTile.position + slotOffset);
+
       yield return null;
     }
 
     private IEnumerator running() {
       var tile = gameState.GetTileByIndex(spot);
 
+      var nextTile = tile;
+      if (spot != gameState.MaxSpot()) {
+        nextTile = gameState.GetTileByIndex(spot + 1);
+      }
+
+      var tp = tile.position + slotOffset;
+
       var startx = transform.position.x;
       var startz = transform.position.z;
 
-      var distx = tile.position.x - startx;
-      var distz = tile.position.z - startz;
+      var distx = tp.x - startx;
+      var distz = tp.z - startz;
 
       var denx = (-0.25f * distx * distx);
       var denz = (-0.25f * distz * distz);
@@ -66,13 +76,13 @@ public class Player : MonoBehaviour
       while (time < duration) {
 
           // base
-          transform.position = Vector3.Lerp(transform.position, tile.position, time / duration);
+          transform.position = Vector3.Lerp(transform.position, tp, time / duration);
 
           var tx = transform.position.x;
           var tz = transform.position.z;
 
-          float arcx = (tx - startx) * (tx - tile.position.x) / denx;
-          float arcz = (tz - startz) * (tz - tile.position.z) / denz;
+          float arcx = (tx - startx) * (tx - tp.x) / denx;
+          float arcz = (tz - startz) * (tz - tp.z) / denz;
 
           if (Misc.IsValid(arcx)) {
             transform.position += new Vector3(0, amp * arcx, 0);
@@ -81,13 +91,21 @@ public class Player : MonoBehaviour
             transform.position += new Vector3(0, amp * arcz, 0);
           }
 
+          // rotation
+          setRotation(nextTile.position + slotOffset);
+
           time += Time.deltaTime;
           yield return null;
       }
+
     }
 
     public void LinkWorld (State gs) {
       this.gameState = gs;
+    }
+
+    private void setRotation (Vector3 dest) {
+      transform.LookAt(new Vector3(dest.x, transform.position.y, dest.z));
     }
 
     private void setSpot(int s) {

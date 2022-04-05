@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum GAME_STATE {
-  WAIT_ROLL,
-  MOVING,
-  GAME_OVER,
-}
 
 public class State : MonoBehaviour {
 
-    public Player[] players;
+    public GameObject portalPrefab = null;
+    public List<GameObject> avatars = null;
+    public float playerScale = .25f;
 
+    private List<Player> players = new List<Player>();
     private PlayerSpot[] tiles = null;
-    private GAME_STATE state = GAME_STATE.WAIT_ROLL;
+    private Constants.GAME_STATE state = Constants.GAME_STATE.WAIT_PLAYERS;
     private QueueRoll queue;
 
     public void InitTiles (PlayerSpot[] t) {
@@ -25,19 +23,19 @@ public class State : MonoBehaviour {
     public void Awake () {
         queue = GetComponent<QueueRoll>();
         queue.LinkWorld(this);
+    }
 
-        foreach (Player p in players) {
-          p.LinkWorld(this);
-        }
+    void Start() {
+      initPortals();
     }
 
     void Update() {
-      if (state == GAME_STATE.WAIT_ROLL) {
+      if (state == Constants.GAME_STATE.WAIT_ROLL) {
           if (Input.GetKeyUp(KeyCode.Q)) {
-            SetState(GAME_STATE.MOVING);
+            SetState(Constants.GAME_STATE.MOVING);
 
-            var roll = queue.DebugRoll(1);
-            // var roll = queue.Roll();
+            // var roll = queue.DebugRoll(1);
+            var roll = queue.Roll();
             var current = queue.Current();
             Debug.Log("Player: " + players[current].ID + " move -> +" + roll);
             StartCoroutine(players[current].Move(roll));
@@ -46,11 +44,29 @@ public class State : MonoBehaviour {
           }
       }
 
-      if (state == GAME_STATE.GAME_OVER) {
+      if (state == Constants.GAME_STATE.GAME_OVER) {
           var current = queue.Current();
           var winner = players[current].ID;
           print("Game Over! Winner player: " + winner);
           SceneManager.LoadScene("Test");
+      }
+
+      if (state == Constants.GAME_STATE.WAIT_PLAYERS) {
+        if (Input.GetKeyUp(KeyCode.A)) {
+          createPlayer();
+          if (players.Count == Constants.MAX_PLAYERS) {
+            SetState(Constants.GAME_STATE.WAIT_ROLL);
+          }
+        }
+
+        if (Input.GetKeyUp(KeyCode.S)) {
+          if (players.Count != 0) {
+            SetState(Constants.GAME_STATE.WAIT_ROLL);
+          } else {
+            Debug.Log("Not enough players");
+          }
+
+        }
       }
     }
 
@@ -58,16 +74,52 @@ public class State : MonoBehaviour {
         return tiles[i];
     }
 
-    public GAME_STATE GetState() {
+    public Constants.GAME_STATE GetState() {
       return state;
     }
 
-    public void SetState(GAME_STATE s) {
+    public void SetState(Constants.GAME_STATE s) {
       // Debug.Log(s);
       state = s;
     }
 
     public int MaxSpot() {
         return tiles.Length - 1;
+    }
+
+    public List<Player> GetPlayers() {
+      return players;
+    }
+
+    public float GetPlayerScale () {
+      return playerScale;
+    }
+
+    private void createPlayer() {
+      if (players.Count >= Constants.MAX_PLAYERS) return;
+      var go = Instantiate(avatars[players.Count], Vector3.zero, Quaternion.identity);
+
+      // // player
+      var player = go.AddComponent<Player>();
+      player.ID = players.Count;
+      player.LinkWorld(this);
+      players.Add(player);
+
+      // // game object
+
+      go.name = "Player " + player.ID;
+    }
+
+    private void initPortals() {
+      foreach (PlayerSpot ps in tiles) {
+        if (ps.isLadder || ps.isSnake) {
+          var go = Instantiate(portalPrefab, ps.position, Quaternion.identity);
+          var portal = go.transform.Find("portal").gameObject;
+          var mat = portal.GetComponent<Renderer>().material;
+
+          mat.SetColor("_Primary", 10 * (ps.isSnake ? Color.red : Color.green));
+          mat.SetFloat("_TimeOffset", ps.index);
+        }
+      }
     }
 }
