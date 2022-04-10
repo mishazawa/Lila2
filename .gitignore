@@ -60,4 +60,6 @@ crashlytics-build.properties
 
 Hou/backup/
 Assets/HDA/
-Assets/HoudiniEngineAssetCache/
+
+# important
+# Assets/HoudiniEngineAssetCache/

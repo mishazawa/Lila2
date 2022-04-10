@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,14 +9,18 @@ public class Player : MonoBehaviour
     public float duration = .5f;
     public float amp = .1f;
 
-    private State gameState;
+    public Material teleportMaterial;
+    public float teleportDuration = 2f;
 
+    private State gameState;
     private int spot = 0;
     private int targetSteps = 0;
-
     private Vector3 slotOffset = Vector3.zero;
+    private MaterialScript mat;
 
     void Start() {
+      mat = GetComponent<MaterialScript>();
+      mat.setShaderPropertyFloat("_color", ID);
       slotOffset = Constants.SPOT_OFFSETS[ID] * gameState.GetPlayerScale();
       StartCoroutine(running());
     }
@@ -45,11 +50,23 @@ public class Player : MonoBehaviour
     }
 
     private IEnumerator teleport() {
+      var time = 0f;
+      while (time < teleportDuration) {
+        mat.setShaderProgress(time/teleportDuration);
+        time += Time.deltaTime;
+        yield return null;
+      }
+
       var tile = gameState.GetTileByIndex(spot);
       var nextTile = gameState.GetTileByIndex(spot+1);
       transform.position = tile.position + slotOffset;
       setRotation(nextTile.position + slotOffset);
 
+      while (time >= 0) {
+        mat.setShaderProgress(time/teleportDuration);
+        time -= Time.deltaTime;
+        yield return null;
+      }
       yield return null;
     }
 
@@ -122,4 +139,5 @@ public class Player : MonoBehaviour
     private void decrementTarget() {
       targetSteps--;
     }
+
 }

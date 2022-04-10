@@ -28,8 +28,8 @@ public static class Constants {
     {44, 22},
   };
   public static int[,] DEBUG_PATHS = {
-    // {2, 4},
-    // {5, 1},
+    {2, 51},
+    {52, 1},
   };
 
   public static int MAX_PLAYERS = 4;

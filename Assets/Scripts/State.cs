@@ -9,6 +9,7 @@ public class State : MonoBehaviour {
     public GameObject portalPrefab = null;
     public List<GameObject> avatars = null;
     public float playerScale = .25f;
+    public Material teleportMaterial;
 
     private List<Player> players = new List<Player>();
     private PlayerSpot[] tiles = null;
@@ -34,8 +35,8 @@ public class State : MonoBehaviour {
           if (Input.GetKeyUp(KeyCode.Q)) {
             SetState(Constants.GAME_STATE.MOVING);
 
-            // var roll = queue.DebugRoll(1);
-            var roll = queue.Roll();
+            var roll = queue.DebugRoll(1);
+            // var roll = queue.Roll();
             var current = queue.Current();
             Debug.Log("Player: " + players[current].ID + " move -> +" + roll);
             StartCoroutine(players[current].Move(roll));
@@ -102,6 +103,7 @@ public class State : MonoBehaviour {
       // // player
       var player = go.AddComponent<Player>();
       player.ID = players.Count;
+      player.teleportMaterial = teleportMaterial;
       player.LinkWorld(this);
       players.Add(player);
 
