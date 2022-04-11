@@ -885,7 +885,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090f406d5d0cfe37dbeb7df5212b5e45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultMaterial: {fileID: 2100000, guid: 7154cf248839accecba2ad68e576646c, type: 2}
+  defaultMaterial: {fileID: 2100000, guid: c7e294e05bde65747aa9d03b71fd2096, type: 2}
+  useDefault: 1
 --- !u!1 &8382504514605366868
 GameObject:
   m_ObjectHideFlags: 0

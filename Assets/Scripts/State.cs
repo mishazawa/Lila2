@@ -15,6 +15,8 @@ public class State : MonoBehaviour {
     private PlayerSpot[] tiles = null;
     private Constants.GAME_STATE state = Constants.GAME_STATE.WAIT_PLAYERS;
     private QueueRoll queue;
+    private Coroutine currentMouseAnimation;
+
 
     public void InitTiles (PlayerSpot[] t) {
         Debug.Log("Init tiles: " + t.Length);
@@ -115,12 +117,8 @@ public class State : MonoBehaviour {
     private void initPortals() {
       foreach (PlayerSpot ps in tiles) {
         if (ps.isLadder || ps.isSnake) {
-          var go = Instantiate(portalPrefab, ps.position, Quaternion.identity);
-          var portal = go.transform.Find("portal").gameObject;
-          var mat = portal.GetComponent<Renderer>().material;
-
-          mat.SetColor("_Primary", 10 * (ps.isSnake ? Color.red : Color.green));
-          mat.SetFloat("_TimeOffset", ps.index);
+          ps.go = Instantiate(portalPrefab, ps.position + portalPrefab.transform.position, Quaternion.identity);
+          ps.go.GetComponent<MaterialScript>().setShaderPropertyFloat("_isLadder", ps.isLadder?1f:0f);
         }
       }
     }

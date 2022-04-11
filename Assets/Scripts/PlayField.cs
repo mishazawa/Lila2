@@ -9,6 +9,7 @@ public class PlayerSpot {
     public bool isLadder = false;
     public int index, next;
     public Vector3 position;
+    public GameObject go;
 }
 
 [ExecuteInEditMode]
@@ -53,7 +54,7 @@ public class PlayField : MonoBehaviour
             tiles[i] = spotData;
         }
 
-        var paths = Constants.DEBUG_PATHS;
+        var paths = Constants./*DEBUG_*/PATHS;
         for (int i = 0; i < paths.GetLength(0); i++) {
           int start = paths[i, 0];
           int end   = paths[i, 1];

@@ -52,7 +52,6 @@ public class Player : MonoBehaviour
     private IEnumerator teleport() {
       var time = 0f;
       while (time < teleportDuration) {
-        mat.setShaderProgress(time/teleportDuration);
         time += Time.deltaTime;
         yield return null;
       }
@@ -63,7 +62,6 @@ public class Player : MonoBehaviour
       setRotation(nextTile.position + slotOffset);
 
       while (time >= 0) {
-        mat.setShaderProgress(time/teleportDuration);
         time -= Time.deltaTime;
         yield return null;
       }

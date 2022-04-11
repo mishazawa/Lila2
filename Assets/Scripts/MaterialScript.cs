@@ -7,11 +7,13 @@ using UnityEngine;
 public class MaterialScript : MonoBehaviour
 {
     public Material defaultMaterial;
+    public bool useDefault = true;
 
     void Awake() {
-        modifyShader(renderer => {
-            renderer.material = defaultMaterial;
-        });
+      if (!useDefault) return;
+      modifyShader(renderer => {
+          renderer.material = defaultMaterial;
+      });
     }
 
     public void setShaderProgress (float val) {
