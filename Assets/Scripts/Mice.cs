@@ -19,12 +19,16 @@ public class Mice : MonoBehaviour {
     }
 
     public IEnumerator playToEnd () {
+        var continueTime = anim.GetCurrentAnimatorStateInfo(0).normalizedTime;
+        anim.Play("mice", -1, 1f);
+
         // disable mouse loop
         StopCoroutine(playback);
 
         // speedup animation
         anim.enabled = true;
         anim.speed = 5f;
+        anim.Play("mice", -1, continueTime);
 
         // wait until it ends
         yield return new WaitForSeconds(getDuration());
