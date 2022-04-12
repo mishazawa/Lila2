@@ -54,7 +54,7 @@ public class PlayField : MonoBehaviour
             tiles[i] = spotData;
         }
 
-        var paths = Constants./*DEBUG_*/PATHS;
+        var paths = Constants.DEBUG_PATHS;
         for (int i = 0; i < paths.GetLength(0); i++) {
           int start = paths[i, 0];
           int end   = paths[i, 1];

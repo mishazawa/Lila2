@@ -8,21 +8,17 @@ public class Player : MonoBehaviour
     public int ID;
     public float duration = .5f;
     public float amp = .1f;
-
-    public Material teleportMaterial;
-    public float teleportDuration = 2f;
+    public int numberOfJumps = 4;
 
     private State gameState;
     private int spot = 0;
     private int targetSteps = 0;
     private Vector3 slotOffset = Vector3.zero;
-    private MaterialScript mat;
 
     void Start() {
-      mat = GetComponent<MaterialScript>();
-      mat.setShaderPropertyFloat("_color", ID);
       slotOffset = Constants.SPOT_OFFSETS[ID] * gameState.GetPlayerScale();
-      StartCoroutine(running());
+      GetComponent<MaterialScript>().setShaderPropertyFloat("_color", ID);
+      StartCoroutine(running(0));
     }
 
     public IEnumerator Move(int steps) {
@@ -31,14 +27,13 @@ public class Player : MonoBehaviour
       while (targetSteps > 0) {
         incrementSpot();
         decrementTarget();
-        yield return StartCoroutine(running());
+        yield return StartCoroutine(running(spot));
       }
 
       var tile = gameState.GetTileByIndex(spot);
 
       if (tile.isSnake || tile.isLadder) {
-        setSpot(tile.next);
-        yield return StartCoroutine(teleport());
+        yield return StartCoroutine(teleport(tile.next));
       }
 
       if (spot != gameState.MaxSpot()) {
@@ -49,31 +44,26 @@ public class Player : MonoBehaviour
 
     }
 
-    private IEnumerator teleport() {
-      var time = 0f;
-      while (time < teleportDuration) {
-        time += Time.deltaTime;
-        yield return null;
+    private IEnumerator teleport(int dest) {
+      var ratio = 1f / numberOfJumps;
+      for (int i = 0; i < numberOfJumps-1; i++) {
+        yield return running((int)Misc.Fit((i+1)*ratio, 0, 1, spot, dest), spot > dest ? -1 : 1);
       }
 
-      var tile = gameState.GetTileByIndex(spot);
-      var nextTile = gameState.GetTileByIndex(spot+1);
-      transform.position = tile.position + slotOffset;
-      setRotation(nextTile.position + slotOffset);
-
-      while (time >= 0) {
-        time -= Time.deltaTime;
-        yield return null;
-      }
-      yield return null;
+      yield return running(dest);
+      setSpot(dest);
     }
 
-    private IEnumerator running() {
+    private IEnumerator running(int spot, int direction = 1) {
       var tile = gameState.GetTileByIndex(spot);
+
+      if (tile.go != null) {
+        StartCoroutine(tile.go.GetComponent<Mice>().playToEnd());
+      }
 
       var nextTile = tile;
       if (spot != gameState.MaxSpot()) {
-        nextTile = gameState.GetTileByIndex(spot + 1);
+        nextTile = gameState.GetTileByIndex(spot + 1 * direction);
       }
 
       var tp = tile.position + slotOffset;

@@ -9,7 +9,6 @@ public class State : MonoBehaviour {
     public GameObject portalPrefab = null;
     public List<GameObject> avatars = null;
     public float playerScale = .25f;
-    public Material teleportMaterial;
 
     private List<Player> players = new List<Player>();
     private PlayerSpot[] tiles = null;
@@ -74,6 +73,8 @@ public class State : MonoBehaviour {
     }
 
     public PlayerSpot GetTileByIndex(int i) {
+        if (i < 0) return tiles[0];
+        if (i > tiles.Length) return tiles[tiles.Length - 1];
         return tiles[i];
     }
 
@@ -100,12 +101,11 @@ public class State : MonoBehaviour {
 
     private void createPlayer() {
       if (players.Count >= Constants.MAX_PLAYERS) return;
-      var go = Instantiate(avatars[players.Count], Vector3.zero, Quaternion.identity);
+      var go = Instantiate(avatars[players.Count], tiles[0].position + Vector3.up, Quaternion.identity);
 
       // // player
       var player = go.AddComponent<Player>();
       player.ID = players.Count;
-      player.teleportMaterial = teleportMaterial;
       player.LinkWorld(this);
       players.Add(player);
 
@@ -118,7 +118,8 @@ public class State : MonoBehaviour {
       foreach (PlayerSpot ps in tiles) {
         if (ps.isLadder || ps.isSnake) {
           ps.go = Instantiate(portalPrefab, ps.position + portalPrefab.transform.position, Quaternion.identity);
-          ps.go.GetComponent<MaterialScript>().setShaderPropertyFloat("_isLadder", ps.isLadder?1f:0f);
+          ps.go.name = "Mice " + ps.index;
+          ps.go.GetComponent<MaterialScript>().setShaderPropertyFloat("_isLadder", ps.isLadder ? 1f : 0f);
         }
       }
     }
