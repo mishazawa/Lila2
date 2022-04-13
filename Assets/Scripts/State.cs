@@ -33,16 +33,11 @@ public class State : MonoBehaviour {
 
     void Update() {
       if (state == Constants.GAME_STATE.WAIT_ROLL) {
+          var current = queue.Current();
+          players[current].SetActive(true);
           if (Input.GetKeyUp(KeyCode.Q)) {
             SetState(Constants.GAME_STATE.MOVING);
-
-            var roll = queue.DebugRoll(1);
-            // var roll = queue.Roll();
-            var current = queue.Current();
-            Debug.Log("Player: " + players[current].ID + " move -> +" + roll);
-            StartCoroutine(players[current].Move(roll));
-
-            queue.NextPlayer();
+            StartCoroutine(moving());
           }
       }
 
@@ -70,6 +65,19 @@ public class State : MonoBehaviour {
 
         }
       }
+    }
+
+    private IEnumerator moving () {
+      // var roll = queue.Roll();
+      var roll = queue.DebugRoll(1);
+      var current = queue.Current();
+
+      yield return players[current].Move(roll);
+      players[current].SetActive(false);
+
+
+      var next = queue.NextPlayer();
+      players[next].SetActive(true);
     }
 
     public PlayerSpot GetTileByIndex(int i) {
@@ -104,7 +112,7 @@ public class State : MonoBehaviour {
       var go = Instantiate(avatars[players.Count], tiles[0].position + Vector3.up, Quaternion.identity);
 
       // // player
-      var player = go.AddComponent<Player>();
+      var player = go.GetComponent<Player>();
       player.ID = players.Count;
       player.LinkWorld(this);
       players.Add(player);

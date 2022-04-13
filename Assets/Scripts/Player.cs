@@ -9,16 +9,24 @@ public class Player : MonoBehaviour
     public float duration = .5f;
     public float amp = .1f;
     public int numberOfJumps = 4;
+    public GameObject cursor;
+
 
     private State gameState;
     private int spot = 0;
     private int targetSteps = 0;
     private Vector3 slotOffset = Vector3.zero;
 
+
     void Start() {
       slotOffset = Constants.SPOT_OFFSETS[ID] * gameState.GetPlayerScale();
       GetComponent<MaterialScript>().setShaderPropertyFloat("_color", ID);
       StartCoroutine(running(0));
+      SetActive(false);
+    }
+
+    public void SetActive(bool val) {
+      cursor.SetActive(val);
     }
 
     public IEnumerator Move(int steps) {
@@ -58,7 +66,7 @@ public class Player : MonoBehaviour
       var tile = gameState.GetTileByIndex(spot);
 
       if (tile.go != null) {
-        StartCoroutine(tile.go.GetComponent<Mice>().playToEnd());
+        tile.go.GetComponent<Mice>().playToEnd();
       }
 
       var nextTile = tile;

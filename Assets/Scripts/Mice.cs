@@ -8,8 +8,9 @@ public class Mice : MonoBehaviour {
     public float rangeEnd     = 1f;
     public float pauseTimeMax = 1f;
 
-    private Animator  anim     = null;
-    private Coroutine playback = null;
+    private Animator  anim      = null;
+    private Coroutine playback  = null;
+    private Coroutine pte = null;
 
     void Start() {
         if (rangeStart > rangeEnd) (rangeStart, rangeEnd) = (rangeEnd, rangeStart);
@@ -18,7 +19,12 @@ public class Mice : MonoBehaviour {
         playback = StartCoroutine(playAnimation());
     }
 
-    public IEnumerator playToEnd () {
+    public void playToEnd() {
+        if (pte != null) StopCoroutine(pte);
+        pte = StartCoroutine(playFast());
+    }
+
+    private IEnumerator playFast () {
         var continueTime = anim.GetCurrentAnimatorStateInfo(0).normalizedTime;
         anim.Play("mice", -1, 1f);
 

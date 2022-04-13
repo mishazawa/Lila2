@@ -12,6 +12,7 @@ public class MaterialScript : MonoBehaviour
     void Awake() {
       if (!useDefault) return;
       modifyShader(renderer => {
+          if (renderer.name == "cursor") return; // xex sorry)
           renderer.material = defaultMaterial;
       });
     }
