@@ -10,6 +10,8 @@ public class PlayerSpot {
     public int index, next;
     public Vector3 position;
     public GameObject go;
+    public GameObject tpFrom;
+    public GameObject tpTo;
 }
 
 [ExecuteInEditMode]
@@ -54,7 +56,7 @@ public class PlayField : MonoBehaviour
             tiles[i] = spotData;
         }
 
-        var paths = Constants.DEBUG_PATHS;
+        var paths = Constants./*DEBUG_*/PATHS;
         for (int i = 0; i < paths.GetLength(0); i++) {
           int start = paths[i, 0];
           int end   = paths[i, 1];
@@ -66,6 +68,6 @@ public class PlayField : MonoBehaviour
           spotData.isLadder = start < end;
         }
 
-        World.GetComponent<State>().InitTiles(tiles);
+        World.GetComponent<State>().InitTiles(tiles, gameObject);
     }
 }

@@ -7,18 +7,18 @@ using UnityEngine.SceneManagement;
 public class State : MonoBehaviour {
 
     public GameObject portalPrefab = null;
-    public List<GameObject> avatars = null;
+    public GameObject levelMesh = null;
+    public GameObject hintPrefab = null;
     public float playerScale = .25f;
+    public List<GameObject> avatars = null;
 
     private List<Player> players = new List<Player>();
     private PlayerSpot[] tiles = null;
     private Constants.GAME_STATE state = Constants.GAME_STATE.WAIT_PLAYERS;
     private QueueRoll queue;
-    private Coroutine currentMouseAnimation;
 
 
-    public void InitTiles (PlayerSpot[] t) {
-        Debug.Log("Init tiles: " + t.Length);
+    public void InitTiles (PlayerSpot[] t, GameObject lvl) {
         tiles = t;
     }
 
@@ -27,11 +27,13 @@ public class State : MonoBehaviour {
         queue.LinkWorld(this);
     }
 
-    void Start() {
+    public void Start() {
+      Screen.SetResolution(800, 600, false);
+
       initPortals();
     }
 
-    void Update() {
+    public void Update() {
       if (state == Constants.GAME_STATE.WAIT_ROLL) {
           var current = queue.Current();
           players[current].SetActive(true);
@@ -128,6 +130,11 @@ public class State : MonoBehaviour {
           ps.go = Instantiate(portalPrefab, ps.position + portalPrefab.transform.position, Quaternion.identity);
           ps.go.name = "Mice " + ps.index;
           ps.go.GetComponent<MaterialScript>().setShaderPropertyFloat("_isLadder", ps.isLadder ? 1f : 0f);
+
+          // create invisible spheres and highlight them on hover
+
+          ps.tpFrom = Instantiate(hintPrefab, ps.position, Quaternion.identity);
+          ps.tpFrom.GetComponent<HoverTip>().Init(levelMesh, tiles[ps.next].position, ps.isSnake);
         }
       }
     }
