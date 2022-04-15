@@ -48,4 +48,5 @@ public static class Constants {
     new Vector3(-1f, 0f, -1f),
   };
 
+  public static string MAIN_SCENE = "Main";
 }

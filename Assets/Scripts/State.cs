@@ -47,7 +47,7 @@ public class State : MonoBehaviour {
           var current = queue.Current();
           var winner = players[current].ID;
           print("Game Over! Winner player: " + winner);
-          SceneManager.LoadScene("Test");
+          SceneManager.LoadScene(Constants.MAIN_SCENE);
       }
 
       if (state == Constants.GAME_STATE.WAIT_PLAYERS) {
