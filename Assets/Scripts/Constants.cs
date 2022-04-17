@@ -39,6 +39,7 @@ public static class Constants {
     WAIT_ROLL,
     MOVING,
     GAME_OVER,
+    PAUSE,
   };
 
   public static Vector3[] SPOT_OFFSETS = {

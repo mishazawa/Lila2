@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.VFX;
 
 
 public class State : MonoBehaviour {
@@ -11,6 +12,7 @@ public class State : MonoBehaviour {
     public GameObject hintPrefab = null;
     public float playerScale = .25f;
     public List<GameObject> avatars = null;
+    public VisualEffect vfx;
 
     private List<Player> players = new List<Player>();
     private PlayerSpot[] tiles = null;
@@ -44,10 +46,7 @@ public class State : MonoBehaviour {
       }
 
       if (state == Constants.GAME_STATE.GAME_OVER) {
-          var current = queue.Current();
-          var winner = players[current].ID;
-          print("Game Over! Winner player: " + winner);
-          SceneManager.LoadScene(Constants.MAIN_SCENE);
+          StartCoroutine(gameOver());
       }
 
       if (state == Constants.GAME_STATE.WAIT_PLAYERS) {
@@ -119,7 +118,8 @@ public class State : MonoBehaviour {
       player.LinkWorld(this);
       players.Add(player);
 
-      // // game object
+      // tmp
+      go.transform.position = tiles[player.GetSpot()].position + Vector3.up;
 
       go.name = "Player " + player.ID;
     }
@@ -137,5 +137,29 @@ public class State : MonoBehaviour {
           ps.tpFrom.GetComponent<HoverTip>().Init(levelMesh, tiles[ps.next].position, ps.isSnake);
         }
       }
+    }
+
+
+    private IEnumerator gameOver() {
+      SetState(Constants.GAME_STATE.PAUSE);
+      var current = queue.Current();
+      var winner = players[current].ID;
+      print("Game Over! Winner player: " + winner);
+
+      vfx.SetFloat("ptnum", 50);
+      vfx.SendEvent("OnPlay");
+      yield return new WaitForSeconds(2f);
+
+
+      var birds = GameObject.Find("/BirdsContainer");
+      birds.SetActive(false);
+      yield return new WaitForSeconds(2f);
+      // remove birds
+      // play out animation
+      // show replay menu
+
+      SceneManager.LoadScene(Constants.MAIN_SCENE);
+      yield return null;
+
     }
 }

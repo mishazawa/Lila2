@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 
 
     private State gameState;
-    private int spot = 0;
+    private int spot = 99;
     private int targetSteps = 0;
     private Vector3 slotOffset = Vector3.zero;
 
@@ -136,4 +136,7 @@ public class Player : MonoBehaviour
       targetSteps--;
     }
 
+    public int GetSpot() {
+      return spot;
+    }
 }
