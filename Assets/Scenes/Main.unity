@@ -451,6 +451,7 @@ MonoBehaviour:
   - {fileID: 7444791287425615677, guid: 87ac1c6f765a52f6eb469cce27d738ac, type: 3}
   - {fileID: 7444791287425615677, guid: 87ac1c6f765a52f6eb469cce27d738ac, type: 3}
   - {fileID: 7444791287425615677, guid: 87ac1c6f765a52f6eb469cce27d738ac, type: 3}
+  vfx: {fileID: 1066537620}
 --- !u!4 &216952451
 Transform:
   m_ObjectHideFlags: 0
