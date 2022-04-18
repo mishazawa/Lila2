@@ -256,7 +256,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181741604}
   m_LocalRotation: {x: -0.37266332, y: -0.32632777, z: 0.1994801, w: -0.8454821}
-  m_LocalPosition: {x: -8.67, y: 19.34, z: -10.94}
+  m_LocalPosition: {x: -11.4, y: 19.31, z: -11.48}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1493119528}
@@ -445,6 +445,7 @@ MonoBehaviour:
   portalPrefab: {fileID: 6762447159807926319, guid: 230a880e885fc3f2fb0e0e4e56970cc0, type: 3}
   levelMesh: {fileID: 2098819400}
   hintPrefab: {fileID: 6950263004434343142, guid: 6fd538dc30c0a91a691f1baba0fb9ce5, type: 3}
+  cameraPivot: {fileID: 1505742479}
   playerScale: 0.25
   avatars:
   - {fileID: 7444791287425615677, guid: 87ac1c6f765a52f6eb469cce27d738ac, type: 3}
@@ -1653,11 +1654,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 2
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 12
+  orthographic size: 4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1680,13 +1681,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 318421352}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalRotation: {x: 0.23911765, y: 0.3696438, z: -0.09904577, w: 0.89239913}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1505742480}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 45, z: 0}
 --- !u!114 &318421356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2688,7 +2689,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493119527}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 3
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
@@ -2696,7 +2697,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 257
+  m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9296838e88877414192005bc33cec284, type: 2}
@@ -2738,6 +2739,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1505742480}
+  - component: {fileID: 1505742481}
   m_Layer: 0
   m_Name: CameraPivot
   m_TagString: Untagged
@@ -2752,15 +2754,30 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1505742479}
-  m_LocalRotation: {x: 0.23911765, y: 0.3696438, z: -0.09904577, w: 0.89239913}
-  m_LocalPosition: {x: -0.5, y: 8, z: 0.5}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.6, y: 9, z: -10.98}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 318421355}
   - {fileID: 2042016823}
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 30, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1505742481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505742479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3ea7a13c962e11e3a1eaad73a5ea538, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0.1
+  amp: 0.0005
+  offset: {x: -10, y: 9, z: -10}
 --- !u!1 &1509396454
 GameObject:
   m_ObjectHideFlags: 0

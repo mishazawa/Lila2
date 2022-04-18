@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 
 
     private State gameState;
-    private int spot = 99;
+    private int spot = Constants.START_SPOT;
     private int targetSteps = 0;
     private Vector3 slotOffset = Vector3.zero;
 
@@ -21,35 +21,30 @@ public class Player : MonoBehaviour
     void Start() {
       slotOffset = Constants.SPOT_OFFSETS[ID] * gameState.GetPlayerScale();
       GetComponent<MaterialScript>().setShaderPropertyFloat("_color", ID);
-      StartCoroutine(running(0));
+      StartCoroutine(running(spot));
       SetActive(false);
     }
 
     public void SetActive(bool val) {
       cursor.SetActive(val);
+      if (!val) return;
+      gameState.SetCameraOnPlayer(transform.position);
     }
 
     public IEnumerator Move(int steps) {
-      targetSteps = steps;
+      targetSteps = validateSteps(steps);
 
       while (targetSteps > 0) {
         incrementSpot();
         decrementTarget();
-        yield return StartCoroutine(running(spot));
+        yield return running(spot);
       }
 
       var tile = gameState.GetTileByIndex(spot);
 
       if (tile.isSnake || tile.isLadder) {
-        yield return StartCoroutine(teleport(tile.next));
+        yield return teleport(tile.next);
       }
-
-      if (spot != gameState.MaxSpot()) {
-        gameState.SetState(Constants.GAME_STATE.WAIT_ROLL);
-      } else {
-        gameState.SetState(Constants.GAME_STATE.GAME_OVER);
-      }
-
     }
 
     private IEnumerator teleport(int dest) {
@@ -86,6 +81,9 @@ public class Player : MonoBehaviour
       var denz = (-0.25f * distz * distz);
 
       var time = 0f;
+
+      gameState.SetCameraOnPlayer(tile.position);
+
       while (time < duration) {
 
           // base
@@ -110,6 +108,7 @@ public class Player : MonoBehaviour
           time += Time.deltaTime;
           yield return null;
       }
+
 
     }
 
@@ -138,5 +137,15 @@ public class Player : MonoBehaviour
 
     public int GetSpot() {
       return spot;
+    }
+
+    private int validateSteps(int steps) {
+      var t = steps + spot;
+      var ms = gameState.MaxSpot();
+
+      if (t >= ms) {
+        return t + (ms - t) - spot; // return delta from max
+      }
+      return steps;
     }
 }

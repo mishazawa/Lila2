@@ -33,6 +33,7 @@ public static class Constants {
   };
 
   public static int MAX_PLAYERS = 4;
+  public static int START_SPOT = 98;
 
   public enum GAME_STATE {
     WAIT_PLAYERS,
@@ -40,6 +41,7 @@ public static class Constants {
     MOVING,
     GAME_OVER,
     PAUSE,
+    NEW_TURN,
   };
 
   public static Vector3[] SPOT_OFFSETS = {

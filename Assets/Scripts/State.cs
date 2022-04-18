@@ -10,6 +10,8 @@ public class State : MonoBehaviour {
     public GameObject portalPrefab = null;
     public GameObject levelMesh = null;
     public GameObject hintPrefab = null;
+    public GameObject cameraPivot = null;
+
     public float playerScale = .25f;
     public List<GameObject> avatars = null;
     public VisualEffect vfx;
@@ -18,7 +20,7 @@ public class State : MonoBehaviour {
     private PlayerSpot[] tiles = null;
     private Constants.GAME_STATE state = Constants.GAME_STATE.WAIT_PLAYERS;
     private QueueRoll queue;
-
+    private Coroutine cameraMovement;
 
     public void InitTiles (PlayerSpot[] t, GameObject lvl) {
         tiles = t;
@@ -33,12 +35,19 @@ public class State : MonoBehaviour {
       Screen.SetResolution(800, 600, false);
 
       initPortals();
+      SetCameraOnPlayer(GetTileByIndex(tiles.Length).position);
     }
 
     public void Update() {
-      if (state == Constants.GAME_STATE.WAIT_ROLL) {
+      if (state == Constants.GAME_STATE.NEW_TURN) {
+          // first time
           var current = queue.Current();
           players[current].SetActive(true);
+          SetState(Constants.GAME_STATE.WAIT_ROLL);
+      }
+
+      if (state == Constants.GAME_STATE.WAIT_ROLL) {
+
           if (Input.GetKeyUp(KeyCode.Q)) {
             SetState(Constants.GAME_STATE.MOVING);
             StartCoroutine(moving());
@@ -53,13 +62,13 @@ public class State : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.A)) {
           createPlayer();
           if (players.Count == Constants.MAX_PLAYERS) {
-            SetState(Constants.GAME_STATE.WAIT_ROLL);
+            SetState(Constants.GAME_STATE.NEW_TURN);
           }
         }
 
         if (Input.GetKeyUp(KeyCode.S)) {
           if (players.Count != 0) {
-            SetState(Constants.GAME_STATE.WAIT_ROLL);
+            SetState(Constants.GAME_STATE.NEW_TURN);
           } else {
             Debug.Log("Not enough players");
           }
@@ -69,21 +78,25 @@ public class State : MonoBehaviour {
     }
 
     private IEnumerator moving () {
-      // var roll = queue.Roll();
-      var roll = queue.DebugRoll(1);
+      var roll = queue.Roll();
+      // var roll = queue.DebugRoll(1);
       var current = queue.Current();
 
       yield return players[current].Move(roll);
-      players[current].SetActive(false);
 
-
-      var next = queue.NextPlayer();
-      players[next].SetActive(true);
+      if (players[current].GetSpot() != MaxSpot()) {
+        SetState(Constants.GAME_STATE.NEW_TURN);
+        players[current].SetActive(false);
+        var next = queue.NextPlayer();
+        players[next].SetActive(true);
+      } else {
+        SetState(Constants.GAME_STATE.GAME_OVER);
+      }
     }
 
     public PlayerSpot GetTileByIndex(int i) {
         if (i < 0) return tiles[0];
-        if (i > tiles.Length) return tiles[tiles.Length - 1];
+        if (i >= tiles.Length) return tiles[tiles.Length - 1];
         return tiles[i];
     }
 
@@ -110,16 +123,13 @@ public class State : MonoBehaviour {
 
     private void createPlayer() {
       if (players.Count >= Constants.MAX_PLAYERS) return;
-      var go = Instantiate(avatars[players.Count], tiles[0].position + Vector3.up, Quaternion.identity);
+      var go = Instantiate(avatars[players.Count], tiles[Constants.START_SPOT].position + Vector3.up, Quaternion.identity);
 
       // // player
       var player = go.GetComponent<Player>();
       player.ID = players.Count;
       player.LinkWorld(this);
       players.Add(player);
-
-      // tmp
-      go.transform.position = tiles[player.GetSpot()].position + Vector3.up;
 
       go.name = "Player " + player.ID;
     }
@@ -160,6 +170,14 @@ public class State : MonoBehaviour {
 
       SceneManager.LoadScene(Constants.MAIN_SCENE);
       yield return null;
+    }
 
+    public void SetCameraOnPlayer(Vector3 pos, bool useLerp = true) {
+      var mc = cameraPivot.GetComponent<MoveCamera>();
+      if (cameraMovement != null) {
+        StopCoroutine(cameraMovement);
+      }
+
+      cameraMovement = StartCoroutine(mc.SetCamera(pos, useLerp));
     }
 }
