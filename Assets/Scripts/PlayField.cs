@@ -9,9 +9,7 @@ public class PlayerSpot {
     public bool isLadder = false;
     public int index, next;
     public Vector3 position;
-    public GameObject go;
-    public GameObject tpFrom;
-    public GameObject tpTo;
+    public GameObject go, hint;
 }
 
 [ExecuteInEditMode]
