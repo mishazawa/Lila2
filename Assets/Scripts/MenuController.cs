@@ -15,6 +15,8 @@ public class MenuController : MonoBehaviour {
     public GameObject move   = null;
 
     public List<GameObject> numbers = null;
+    public List<GameObject> players = null;
+    public MaterialScript mat = null;
 
     public float duration = .5f;
     public float distance = 2f;
@@ -47,6 +49,10 @@ public class MenuController : MonoBehaviour {
         if (t == Types.MOVE)   Enable(move);
     }
 
+    public void SetWinner (int ID) {
+        mat.setShaderPropertyFloat("_color", ID);
+    }
+
     public IEnumerator AnimateRoll (int roll) {
         var number = numbers[roll-1].transform;
 
@@ -63,5 +69,10 @@ public class MenuController : MonoBehaviour {
         });
 
         number.localPosition = startTransform;
+    }
+
+    public void AnimatePlayerConnection (int pn) {
+        var pl = players[pn-1].transform;
+        pl.localPosition = new Vector3(pl.localPosition.x, 0, pl.localPosition.z);
     }
 }

@@ -59,6 +59,7 @@ public class State : MonoBehaviour {
           onPause();
           break;
       }
+      onCameraZoom();
     }
 
     public PlayerSpot GetTileByIndex(int i) {
@@ -127,7 +128,6 @@ public class State : MonoBehaviour {
 
     private IEnumerator gameOver() {
       SetState(Constants.GAME_STATE.PAUSE);
-      menu.ShowMenuType(MenuController.Types.REPLAY);
 
       // show winner
       var current = queue.Current();
@@ -141,6 +141,8 @@ public class State : MonoBehaviour {
       // rm birds
       yield return Misc.Delay(Constants.BIRDS_LIFETIME, () => birds.SetActive(false));
 
+      menu.SetWinner(winner);
+      menu.ShowMenuType(MenuController.Types.REPLAY);
       // blur cam
       var mc = cameraPivot.GetComponent<MoveCamera>();
       yield return mc.BlurCamera(mc.minDOF);
@@ -171,7 +173,6 @@ public class State : MonoBehaviour {
     }
 
     private void SetupMenu() {
-      Debug.Log("asd");
       menu.ShowMenuType(MenuController.Types.START);
     }
 
@@ -207,6 +208,19 @@ public class State : MonoBehaviour {
         StartCoroutine(gameOver());
     }
 
+    private void onCameraZoom () {
+        if (Input.GetKeyDown(KeyCode.BackQuote)) {
+          Debug.Log("~asd+");
+          var mc = cameraPivot.GetComponent<MoveCamera>();
+          StartCoroutine(mc.Zoom(mc.maxZoom));
+        }
+        if (Input.GetKeyUp(KeyCode.BackQuote)) {
+          Debug.Log("~asd-");
+          var mc = cameraPivot.GetComponent<MoveCamera>();
+          StartCoroutine(mc.Zoom(mc.minZoom));
+        }
+    }
+
     private void onPause() {
       if (Input.GetKeyUp(KeyCode.R)) {
         Replay();
@@ -228,6 +242,7 @@ public class State : MonoBehaviour {
     public void AddPlayer() {
       if (players.Count == Constants.MAX_PLAYERS) return;
       createPlayer();
+      menu.AnimatePlayerConnection(players.Count);
     }
 
     public void Replay () {

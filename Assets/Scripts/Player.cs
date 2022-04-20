@@ -19,10 +19,12 @@ public class Player : MonoBehaviour
 
 
     void Start() {
-      slotOffset = Constants.SPOT_OFFSETS[ID] * gameState.GetPlayerScale();
-      GetComponent<MaterialScript>().setShaderPropertyFloat("_color", ID);
-      StartCoroutine(running(spot));
-      SetActive(false);
+      if (gameState != null) {
+        slotOffset = Constants.SPOT_OFFSETS[ID] * gameState.GetPlayerScale();
+        GetComponent<MaterialScript>().setShaderPropertyFloat("_color", ID);
+        StartCoroutine(running(spot));
+        SetActive(false);
+      }
     }
 
     public void SetActive(bool val) {

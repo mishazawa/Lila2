@@ -35,7 +35,7 @@ public static class Constants {
 
   public static bool  DEMO_AUTOPLAY   = false;
   public static int   MAX_PLAYERS     = 4;
-  public static int   START_SPOT      = 0;
+  public static int   START_SPOT      = 94;
   public static int   PARTICLES_COUNT = 100;
   public static float BIRDS_LIFETIME  = .5f;
 

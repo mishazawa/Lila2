@@ -11,9 +11,12 @@ public class MoveCamera : MonoBehaviour
     public Vector3 offset = new Vector3(-10f, 9f, -10f);
 
     public Volume cameraEffectVolume;
-    public float minDOF = 10f;
+    public float minDOF = 20f;
     public float maxDOF = 4f;
     public float blurDuration = .5f;
+
+    public float minZoom = 4f;
+    public float maxZoom = 9f;
 
     private DepthOfField dof;
 
@@ -39,5 +42,10 @@ public class MoveCamera : MonoBehaviour
         return Misc.DurationFn(blurDuration, (delta) => {
             dof.focusDistance.value = Mathf.Lerp(val, targetDof, delta);
         });
+    }
+
+    public IEnumerator Zoom (float targetZoom) {
+        yield return null;
+        Camera.main.orthographicSize = targetZoom;
     }
 }
