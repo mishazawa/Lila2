@@ -12,8 +12,8 @@ public class State : MonoBehaviour {
     public GameObject hintPrefab    = null;
     public GameObject cameraPivot   = null;
     public GameObject birds         = null;
-    public GameObject menu          = null;
     public VisualEffect vfx         = null;
+    public MenuController menu      = null;
     public List<GameObject> avatars = null;
     public float playerScale        = .25f;
 
@@ -33,6 +33,12 @@ public class State : MonoBehaviour {
     public void Start() {
       SetupPortals();
       SetupFinishSpot();
+      SetupMenu();
+
+      if (Constants.DEMO_AUTOPLAY) {
+        StartCoroutine(Misc.Delay(.5f, () => AddPlayer()));
+        StartCoroutine(Misc.Delay(.5f, () => StartGame()));
+      }
     }
 
     public void Update() {
@@ -121,28 +127,34 @@ public class State : MonoBehaviour {
 
     private IEnumerator gameOver() {
       SetState(Constants.GAME_STATE.PAUSE);
+      menu.ShowMenuType(MenuController.Types.REPLAY);
+
+      // show winner
       var current = queue.Current();
       var winner = players[current].ID;
       print("Game Over! Winner player: " + winner);
 
-      vfx.SetFloat("ptnum", 50);
+      // show particles
+      vfx.SetFloat("Points", Constants.PARTICLES_COUNT);
       vfx.SendEvent("OnPlay");
 
-      var mc = cameraPivot.GetComponent<MoveCamera>();
+      // rm birds
+      yield return Misc.Delay(Constants.BIRDS_LIFETIME, () => birds.SetActive(false));
 
-      // yield return new WaitForSeconds(2f);
-      birds.SetActive(false);
+      // blur cam
+      var mc = cameraPivot.GetComponent<MoveCamera>();
       yield return mc.BlurCamera(mc.minDOF);
     }
 
-    private IEnumerator moving () {
-      var roll = queue.Roll();
-      // var roll = queue.DebugRoll(1);
+    private IEnumerator moving (int roll) {
+      yield return menu.AnimateRoll(roll);
+
       var current = queue.Current();
 
       yield return players[current].Move(roll);
 
       if (players[current].GetSpot() != MaxSpot()) {
+        // switch players
         SetState(Constants.GAME_STATE.NEW_TURN);
         players[current].SetActive(false);
         var next = queue.NextPlayer();
@@ -158,6 +170,11 @@ public class State : MonoBehaviour {
       queue.LinkWorld(this);
     }
 
+    private void SetupMenu() {
+      Debug.Log("asd");
+      menu.ShowMenuType(MenuController.Types.START);
+    }
+
     private void SetupFinishSpot() {
       var lastSpotPos = GetTileByIndex(tiles.Length).position;
       birds.transform.position = lastSpotPos;
@@ -165,7 +182,7 @@ public class State : MonoBehaviour {
       SetCameraOnPlayer(lastSpotPos, false);
     }
 
-        private void onNewTurn () {
+    private void onNewTurn () {
         var current = queue.Current();
         players[current].SetActive(true);
         SetState(Constants.GAME_STATE.WAIT_ROLL);
@@ -173,8 +190,7 @@ public class State : MonoBehaviour {
 
     private void onWaitRoll () {
         if (Input.GetKeyUp(KeyCode.Q)) {
-            SetState(Constants.GAME_STATE.MOVING);
-            StartCoroutine(moving());
+          RollDie();
         }
     }
 
@@ -193,21 +209,41 @@ public class State : MonoBehaviour {
 
     private void onPause() {
       if (Input.GetKeyUp(KeyCode.R)) {
-        SceneManager.LoadScene(Constants.MAIN_SCENE);
+        Replay();
       }
     }
 
     public void StartGame() {
       if (players.Count == 0) return;
+
+      menu.HideAll();
+      menu.ShowMenuType(MenuController.Types.MOVE);
+
       var mc = cameraPivot.GetComponent<MoveCamera>();
       StartCoroutine(mc.BlurCamera(mc.maxDOF));
       SetState(Constants.GAME_STATE.NEW_TURN);
       // paly Anim;
-      menu.SetActive(false);
     }
 
     public void AddPlayer() {
       if (players.Count == Constants.MAX_PLAYERS) return;
       createPlayer();
+    }
+
+    public void Replay () {
+      SceneManager.LoadScene(Constants.MAIN_SCENE);
+    }
+
+    public void RollDie () {
+      if (state != Constants.GAME_STATE.WAIT_ROLL) return;
+
+      // var roll = queue.DebugRoll(1);
+      var roll    = queue.Roll();
+      SetState(Constants.GAME_STATE.MOVING);
+      StartCoroutine(moving(roll));
+    }
+
+    public Vector3 GetMouseDirection () {
+      return GetComponent<MouseDirection>().GetDirection();
     }
 }

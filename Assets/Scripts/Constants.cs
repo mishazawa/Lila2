@@ -27,13 +27,17 @@ public static class Constants {
     {46,  5},
     {44, 22},
   };
+
   public static int[,] DEBUG_PATHS = {
     {2, 51},
     {52, 1},
   };
 
-  public static int MAX_PLAYERS = 4;
-  public static int START_SPOT = 98;
+  public static bool  DEMO_AUTOPLAY   = false;
+  public static int   MAX_PLAYERS     = 4;
+  public static int   START_SPOT      = 0;
+  public static int   PARTICLES_COUNT = 100;
+  public static float BIRDS_LIFETIME  = .5f;
 
   public enum GAME_STATE {
     WAIT_PLAYERS,

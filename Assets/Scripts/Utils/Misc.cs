@@ -20,4 +20,9 @@ public static class Misc {
             yield return null;
         }
     }
+
+    public static IEnumerator Delay(float duration, Action fn) {
+        yield return new WaitForSeconds(duration);
+        fn();
+    }
 }

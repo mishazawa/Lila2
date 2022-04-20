@@ -11,7 +11,7 @@ public class MoveCamera : MonoBehaviour
     public Vector3 offset = new Vector3(-10f, 9f, -10f);
 
     public Volume cameraEffectVolume;
-    public float minDOF = 0.1f;
+    public float minDOF = 10f;
     public float maxDOF = 4f;
     public float blurDuration = .5f;
 
@@ -20,14 +20,6 @@ public class MoveCamera : MonoBehaviour
     void Start() {
       cameraEffectVolume.sharedProfile.TryGet<DepthOfField>(out dof);
       dof.focusDistance.value = minDOF;
-    }
-
-    private IEnumerator IdleCamera () {
-        while (true) {
-            var v = Mathf.Sin(Time.time * Mathf.PI);
-            transform.position += Vector3.up * v * amp;
-            yield return null;
-        }
     }
 
     public IEnumerator SetCamera (Vector3 pos, bool useLerp = true) {
