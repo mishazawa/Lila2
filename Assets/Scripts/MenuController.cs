@@ -27,7 +27,6 @@ public class MenuController : MonoBehaviour {
     public float pauseTime = .25f;
 
     public void Awake () {
-        Debug.Log("Hide menus.");
         HideAll();
     }
 

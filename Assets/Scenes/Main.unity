@@ -2620,6 +2620,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalPrefab: {fileID: 6762447159807926319, guid: 230a880e885fc3f2fb0e0e4e56970cc0, type: 3}
   levelMesh: {fileID: 134287451}
+  metaMesh: {fileID: 1281874154}
   hintPrefab: {fileID: 6950263004434343142, guid: 6fd538dc30c0a91a691f1baba0fb9ce5, type: 3}
   cameraPivot: {fileID: 1505742479}
   birds: {fileID: 1509396454}
@@ -3409,6 +3410,8 @@ MonoBehaviour:
   start: {fileID: 1605791525}
   replay: {fileID: 1624804751}
   move: {fileID: 1108679332}
+  mute: {fileID: 1210260224}
+  unmute: {fileID: 175536825}
   numbers:
   - {fileID: 747110590}
   - {fileID: 1714560356}
@@ -4320,7 +4323,7 @@ GameObject:
   - component: {fileID: 1281874154}
   m_Layer: 6
   m_Name: mszw_stairs_level7_OUT_OUT_1_bakedClone
-  m_TagString: EditorOnly
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

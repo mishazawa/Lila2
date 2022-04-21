@@ -12,38 +12,18 @@ public class PlayerSpot {
     public GameObject go, hint;
 }
 
-[ExecuteInEditMode]
-public class PlayField : MonoBehaviour
-{
-    private GameObject World = null;
-
-    // houdini
-    private bool metadata = false;
-    private HEU_OutputAttributesStore attrStore;
-
-    void Awake() {
-        World = GameObject.Find("/World");
-        if (World == null) return;
-
-        attrStore = gameObject.GetComponent<HEU_OutputAttributesStore>();
-        if (attrStore == null) return;
-
-        var mdata = attrStore.GetAttribute("metadata");
-        metadata = mdata._intValues[0] == 1;
-        if (!metadata) return;
-        HEU_Logger.LogFormat("Store loaded");
-
-        BuildGrid();
+public class PlayField : MonoBehaviour {
+    private HEU_OutputAttributesStore attrStore () {
+        return gameObject.GetComponent<HEU_OutputAttributesStore>();
     }
 
-    public void BuildGrid () {
-        HEU_Logger.LogFormat("Building Grid");
+    public PlayerSpot[] BuildGrid () {
+        var store = attrStore();
+        var spot = store.GetAttribute("spot");
+        var pos = store.GetAttribute("position");
 
-        var spot = attrStore.GetAttribute("spot");
-        var pos = attrStore.GetAttribute("position");
-
-        PlayerSpot[] tiles = new PlayerSpot[spot._count];
-
+        var tiles = new PlayerSpot[spot._count];
+        Debug.Log(spot._count);
         var positions = HoudiniData.ParseVector(pos);
 
         for (int i = 0; i < positions.Length; i++) {
@@ -65,7 +45,7 @@ public class PlayField : MonoBehaviour
           spotData.isSnake = start > end;
           spotData.isLadder = start < end;
         }
-
-        World.GetComponent<State>().InitTiles(tiles, gameObject);
+        return tiles;
     }
+
 }

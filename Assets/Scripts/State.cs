@@ -9,6 +9,7 @@ public class State : MonoBehaviour {
 
     public GameObject portalPrefab  = null;
     public GameObject levelMesh     = null;
+    public PlayField  metaMesh      = null;
     public GameObject hintPrefab    = null;
     public GameObject cameraPivot   = null;
     public GameObject birds         = null;
@@ -26,12 +27,12 @@ public class State : MonoBehaviour {
     private Constants.GAME_STATE state = Constants.GAME_STATE.WAIT_PLAYERS;
 
 
-    public void Awake () {
+    void Awake () {
       SetupGame();
+      SetupPortals();
     }
 
-    public void Start() {
-      SetupPortals();
+    void Start() {
       SetupFinishSpot();
       SetupMenu();
       SetupAmbientSound();
@@ -42,7 +43,7 @@ public class State : MonoBehaviour {
       }
     }
 
-    public void Update() {
+    void Update() {
       switch(state) {
         case Constants.GAME_STATE.NEW_TURN:
           onNewTurn();
@@ -112,6 +113,7 @@ public class State : MonoBehaviour {
     }
 
     private void SetupPortals() {
+      tiles = metaMesh.BuildGrid();
       foreach (PlayerSpot ps in tiles) {
         if (ps.isLadder || ps.isSnake) {
           ps.go = Instantiate(portalPrefab, ps.position + portalPrefab.transform.position, Quaternion.identity);
@@ -167,7 +169,6 @@ public class State : MonoBehaviour {
     }
 
     private void SetupGame() {
-      Screen.SetResolution(800, 600, false);
       queue = GetComponent<QueueRoll>();
       queue.LinkWorld(this);
     }
@@ -176,13 +177,13 @@ public class State : MonoBehaviour {
       menu.ShowMenuType(MenuController.Types.START);
     }
     private void SetupAmbientSound() {
-      StartCoroutine(asd());
+      StartCoroutine(randomMeow());
     }
 
-    IEnumerator asd () {
+    IEnumerator randomMeow () {
         yield return new WaitForSeconds(Misc.Fit(Random.value, 0, 1, 50, 100));
         FindObjectOfType<AudioManager>().Play(Constants.SOUND_CAT);
-        yield return asd();
+        yield return randomMeow();
     }
 
     private void SetupFinishSpot() {
@@ -219,12 +220,10 @@ public class State : MonoBehaviour {
 
     private void onCameraZoom () {
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
-          Debug.Log("~asd+");
           var mc = cameraPivot.GetComponent<MoveCamera>();
           StartCoroutine(mc.Zoom(mc.maxZoom));
         }
         if (Input.GetKeyUp(KeyCode.BackQuote)) {
-          Debug.Log("~asd-");
           var mc = cameraPivot.GetComponent<MoveCamera>();
           StartCoroutine(mc.Zoom(mc.minZoom));
         }
