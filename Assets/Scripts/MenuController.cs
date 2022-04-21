@@ -14,6 +14,10 @@ public class MenuController : MonoBehaviour {
     public GameObject replay = null;
     public GameObject move   = null;
 
+    public GameObject mute   = null;
+    public GameObject unmute = null;
+
+
     public List<GameObject> numbers = null;
     public List<GameObject> players = null;
     public MaterialScript mat = null;
@@ -28,11 +32,11 @@ public class MenuController : MonoBehaviour {
     }
 
 
-    private void Enable (GameObject go) {
+    public void Enable (GameObject go) {
         go.SetActive(true);
     }
 
-    private void Disable (GameObject go) {
+    public void Disable (GameObject go) {
         go.SetActive(false);
     }
 
@@ -40,6 +44,11 @@ public class MenuController : MonoBehaviour {
         Disable(start);
         Disable(replay);
         Disable(move);
+
+        var muted = FindObjectOfType<AudioManager>().muted;
+        if (muted) Disable(mute);
+        if (!muted) Disable(unmute);
+
     }
 
     public void ShowMenuType (MenuController.Types t) {
@@ -74,5 +83,9 @@ public class MenuController : MonoBehaviour {
     public void AnimatePlayerConnection (int pn) {
         var pl = players[pn-1].transform;
         pl.localPosition = new Vector3(pl.localPosition.x, 0, pl.localPosition.z);
+    }
+
+    public void Mute (bool val) {
+        FindObjectOfType<AudioManager>().Mute(val);
     }
 }

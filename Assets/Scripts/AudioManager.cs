@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
     public static AudioManager inst;
 
     public Sound[] audioClips;
+    public bool muted;
 
     void Awake () {
         if (inst == null) {
@@ -33,6 +34,7 @@ public class AudioManager : MonoBehaviour
     }
 
     public void Play (string name) {
+        if (muted) return;
         foreach (var s in audioClips) {
             if (s.name == name) {
                 s.src.Play();
@@ -40,5 +42,26 @@ public class AudioManager : MonoBehaviour
             }
         }
         Debug.LogWarning("No sound with name: " + name);
+    }
+
+    public void Pause (string name) {
+        foreach (var s in audioClips) {
+            if (s.name == name) {
+                s.src.Pause();
+                return;
+            }
+        }
+        Debug.LogWarning("No sound with name: " + name);
+    }
+
+    public void Mute (bool val) {
+        muted = val;
+        if (muted) {
+            Pause(Constants.SOUND_THEME);
+            Pause(Constants.SOUND_SEA);
+        } else {
+            Play(Constants.SOUND_THEME);
+            Play(Constants.SOUND_SEA);
+        }
     }
 }
