@@ -84,6 +84,7 @@ public class Player : MonoBehaviour
 
       var time = 0f;
 
+      FindObjectOfType<AudioManager>().Play(Constants.SOUND_STEP);
       gameState.SetCameraOnPlayer(tile.position);
 
       while (time < duration) {
@@ -110,7 +111,6 @@ public class Player : MonoBehaviour
           time += Time.deltaTime;
           yield return null;
       }
-
 
     }
 

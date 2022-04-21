@@ -34,6 +34,7 @@ public class State : MonoBehaviour {
       SetupPortals();
       SetupFinishSpot();
       SetupMenu();
+      SetupAmbientSound();
 
       if (Constants.DEMO_AUTOPLAY) {
         StartCoroutine(Misc.Delay(.5f, () => AddPlayer()));
@@ -129,10 +130,7 @@ public class State : MonoBehaviour {
     private IEnumerator gameOver() {
       SetState(Constants.GAME_STATE.PAUSE);
 
-      // show winner
-      var current = queue.Current();
-      var winner = players[current].ID;
-      print("Game Over! Winner player: " + winner);
+      FindObjectOfType<AudioManager>().Play(Constants.SOUND_WIN);
 
       // show particles
       vfx.SetFloat("Points", Constants.PARTICLES_COUNT);
@@ -141,7 +139,9 @@ public class State : MonoBehaviour {
       // rm birds
       yield return Misc.Delay(Constants.BIRDS_LIFETIME, () => birds.SetActive(false));
 
-      menu.SetWinner(winner);
+      // show winner
+      var current = queue.Current();
+      menu.SetWinner(players[current].ID);
       menu.ShowMenuType(MenuController.Types.REPLAY);
       // blur cam
       var mc = cameraPivot.GetComponent<MoveCamera>();
@@ -174,6 +174,15 @@ public class State : MonoBehaviour {
 
     private void SetupMenu() {
       menu.ShowMenuType(MenuController.Types.START);
+    }
+    private void SetupAmbientSound() {
+      StartCoroutine(asd());
+    }
+
+    IEnumerator asd () {
+        yield return new WaitForSeconds(Misc.Fit(Random.value, 0, 1, 50, 100));
+        FindObjectOfType<AudioManager>().Play(Constants.SOUND_CAT);
+        yield return asd();
     }
 
     private void SetupFinishSpot() {

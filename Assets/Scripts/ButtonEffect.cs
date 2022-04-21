@@ -24,6 +24,7 @@ public class ButtonEffect : MonoBehaviour {
     }
 
     void OnMouseUpAsButton() {
+        FindObjectOfType<AudioManager>().Play(Constants.SOUND_BTN);
         Hover(Vector3.one * scaleOnHover, Vector3.one);
         onClick.Invoke();
         Hover(Vector3.one, Vector3.one * scaleOnHover);

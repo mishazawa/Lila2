@@ -35,7 +35,7 @@ public static class Constants {
 
   public static bool  DEMO_AUTOPLAY   = false;
   public static int   MAX_PLAYERS     = 4;
-  public static int   START_SPOT      = 0;
+  public static int   START_SPOT      = 98;
   public static int   PARTICLES_COUNT = 100;
   public static float BIRDS_LIFETIME  = .5f;
 
@@ -56,4 +56,13 @@ public static class Constants {
   };
 
   public static string MAIN_SCENE = "Main";
+
+  public static string SOUND_CONTROLLER = "SoundController";
+
+  public static string SOUND_THEME = "Theme";
+  public static string SOUND_SEA   = "Sea";
+  public static string SOUND_STEP  = "Step";
+  public static string SOUND_CAT   = "Cat";
+  public static string SOUND_BTN   = "Button";
+  public static string SOUND_WIN   = "Win";
 }
